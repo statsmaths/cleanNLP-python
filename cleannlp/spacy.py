@@ -13,9 +13,12 @@ class spacyCleanNLP:
     def __init__(self, model_name='en'):
         with catch_warnings():
             simplefilter("ignore")
-            self.nlp = spacy.load(name=model_name)
+            try:
+                self.nlp = spacy.load(name=model_name)
+            except OSError as e:
+                self.nlp = None
 
-    def parseDocument(self, text, id):
+    def parseDocument(self, text, doc_id):
         with catch_warnings():
             simplefilter("ignore")
             doc = self.nlp(text)
@@ -26,18 +29,19 @@ class spacyCleanNLP:
             sent_index[sent.start] = sid
             sid += 1
 
-        token = get_token(doc, id)
-        ent = get_entity(doc, id, sent_index)
+        token = get_token(doc, doc_id)
+        ent = get_entity(doc, doc_id, sent_index)
 
         return {"token": token, "entity": ent}
 
 
-def get_token(doc, id):
+def get_token(doc, doc_id):
     token = {
-        "id": [],
+        "doc_id": [],
         "sid": [],
         "tid": [],
         "token": [],
+        "token_with_ws": [],
         "lemma": [],
         "upos": [],
         "xpos": [],
@@ -61,18 +65,12 @@ def get_token(doc, id):
             else:
                 dep_id = word.head.i - start_token_i + 1
 
-            this_text = word.text
-            this_lemma = word.lemma_
-            this_text = this_text.replace("\"", "\\\'")
-            this_text = this_text.replace("\'", "\\\'")
-            this_lemma = this_lemma.replace("\"", "\\\'")
-            this_lemma = this_lemma.replace("\'", "\\\'")
-
-            token['id'].append(id)
+            token['doc_id'].append(doc_id)
             token['sid'].append(sid)
             token['tid'].append(tid)
-            token['token'].append(this_text)
-            token['lemma'].append(this_lemma)
+            token['token'].append(word.text)
+            token['token_with_ws'].append(word.text_with_ws)
+            token['lemma'].append(word.lemma_)
             token['upos'].append(word.pos_)
             token['xpos'].append(word.tag_)
             token['tid_source'].append(dep_id)
@@ -84,9 +82,9 @@ def get_token(doc, id):
     return token
 
 
-def get_entity(doc, id, sent_index):
+def get_entity(doc, doc_id, sent_index):
     evals = {
-        "id": [],
+        "doc_id": [],
         "sid": [],
         "tid": [],
         "tid_end": [],
@@ -99,9 +97,9 @@ def get_entity(doc, id, sent_index):
         sid = sent_index.get(ent.sent.start, -1)
         tid_start = ent.start - ent.sent.start + 1
         tid_end = ent.end - ent.sent.start
-        entity = ent.text.replace('"','')
+        entity = ent.text.replace('"', '')
 
-        evals['id'].append(id)
+        evals['doc_id'].append(doc_id)
         evals['sid'].append(sid)
         evals['tid'].append(tid_start)
         evals['tid_end'].append(tid_end)
