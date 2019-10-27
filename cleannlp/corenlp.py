@@ -22,18 +22,21 @@ class HiddenPrints:
 class corenlpCleanNLP:
     """A class to call spacy and output normalized tables"""
 
-    def __init__(self, lang='en', models_dir=None):
+    def __init__(self, lang='en', models_dir=None, config=None):
         if models_dir is None:
             models_dir = default_model_dir()
+
+        if config is None:
+            config = {}
+
+        config['lang'] = lang
+        config['models_dir'] = models_dir
 
         with HiddenPrints():
             with catch_warnings():
                 simplefilter("ignore")
                 try:
-                    self.nlp = stanfordnlp.Pipeline(
-                        lang=lang,
-                        models_dir=models_dir
-                    )
+                    self.nlp = stanfordnlp.Pipeline(**config)
                 except KeyError as e:
                     self.nlp = None
 
