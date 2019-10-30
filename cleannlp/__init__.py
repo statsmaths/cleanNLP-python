@@ -8,6 +8,6 @@ from os import environ
 from . import corenlp
 from . import spacy
 
-__version__ = "1.0.1"
+__version__ = "1.0.2"
 
 environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
