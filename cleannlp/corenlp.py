@@ -74,13 +74,18 @@ def get_token(doc, doc_id):
             token['doc_id'].append(doc_id)
             token['sid'].append(sid)
             token['tid'].append(tid)
-            token['token'].append(word.text)
-            token['lemma'].append(word.lemma)
-            token['upos'].append(word.upos)
-            token['xpos'].append(word.pos)
-            token['feats'].append(word.feats)
-            token['tid_source'].append(word.governor)
-            token['relation'].append(word.dependency_relation)
+            token['token'].append(word.text if word.text is not None else "")
+            token['lemma'].append(word.lemma if word.lemma is not None else "")
+            token['upos'].append(word.upos if word.upos is not None else "")
+            token['xpos'].append(word.pos if word.pos is not None else "")
+            token['feats'].append(word.feats if word.feats is not None else "")
+            token['tid_source'].append(
+                word.governor if word.governor is not None else ""
+            )
+            token['relation'].append(
+                word.dependency_relation
+                    if word.dependency_relation is not None else ""
+            )
 
             tid += 1
 
