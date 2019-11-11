@@ -10,11 +10,21 @@ import spacy
 class spacyCleanNLP:
     """A class to call spacy and output normalized tables"""
 
-    def __init__(self, model_name='en'):
+    def __init__(self, model_name='en', disable=None):
+        if disable is None:
+            disable = []
+
+        if isinstance(disable, str):
+            disable = [disable]
+
         with catch_warnings():
             simplefilter("ignore")
             try:
-                self.nlp = spacy.load(name=model_name)
+                self.nlp = spacy.load(name=model_name, disable=disable)
+                if 'parser' not in self.nlp.pipe_names:
+                    if 'sentencizer' not in self.nlp.pipe_names:
+                        self.nlp.add_pipe(self.nlp.create_pipe('sentencizer'))
+
             except OSError as e:
                 self.nlp = None
 
