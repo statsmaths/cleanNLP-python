@@ -10,7 +10,7 @@ import spacy
 class spacyCleanNLP:
     """A class to call spacy and output normalized tables"""
 
-    def __init__(self, model_name='en', disable=None):
+    def __init__(self, model_name='en', max_length=1000000, disable=None):
         if disable is None:
             disable = []
 
@@ -20,7 +20,11 @@ class spacyCleanNLP:
         with catch_warnings():
             simplefilter("ignore")
             try:
-                self.nlp = spacy.load(name=model_name, disable=disable)
+                self.nlp = spacy.load(
+                    name=model_name,
+                    disable=disable,
+                    max_length=max_length
+                )
                 if 'parser' not in self.nlp.pipe_names:
                     if 'sentencizer' not in self.nlp.pipe_names:
                         self.nlp.add_pipe(self.nlp.create_pipe('sentencizer'))

@@ -7,13 +7,12 @@ NLP packages, standardizes the output, and returns to R as normalized tables.
 """
 
 required = [
-    "spacy",
-    "stanfordnlp"
+    "spacy"
 ]
 
 setup(
     name="cleannlp",
-    version="1.0.2",
+    version="1.0.3",
     description="A Tidy Data Model for Natural Language Processing",
     long_description=long_description,
     author="Taylor Anold",

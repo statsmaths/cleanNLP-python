@@ -6,7 +6,11 @@ import os
 import sys
 from warnings import catch_warnings, simplefilter
 
-import stanfordnlp
+try:
+    import stanfordnlp
+    STANFORD_AVAILABLE = True
+except ImportError:
+    STANFORD_AVAILABLE = False
 
 
 class HiddenPrints:
@@ -20,7 +24,7 @@ class HiddenPrints:
 
 
 class corenlpCleanNLP:
-    """A class to call spacy and output normalized tables"""
+    """A class to call coreNLP and output normalized tables"""
 
     def __init__(self, lang='en', models_dir=None, config=None):
         if models_dir is None:
@@ -84,7 +88,7 @@ def get_token(doc, doc_id):
             )
             token['relation'].append(
                 word.dependency_relation
-                    if word.dependency_relation is not None else ""
+                if word.dependency_relation is not None else ""
             )
 
             tid += 1
